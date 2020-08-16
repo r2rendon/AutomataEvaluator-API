@@ -100,7 +100,7 @@ def api_get_automatas():
 
     json_automatas = JSONEncoder().encode(automatas)
 
-    return Response(json_automatas, mimetype="json").status_code(200)
+    return Response(json_automatas, mimetype="json")
 
 
 @app.route('/automatas/<id>', methods=['GET'])
@@ -108,7 +108,7 @@ def api_get_automata_by_id(id):
     automata = mongo.db.Automatas.find({"_id": ObjectId(id)})[0]
     json_automata = JSONEncoder().encode(automata)
 
-    return Response(json_automata, mimetype="json").status_code(200)
+    return Response(json_automata, mimetype="json")
 
 
 @app.route('/automatas/<evalType>/<automataID>/<expression>', methods=['GET'])
@@ -120,7 +120,7 @@ def api_get_evaluation(evalType, automataID, expression):
             'accepting_states': set(dbAutomata["accepting_states"]),
             'transitions': objectToTupleKeys(dbAutomata["transitions"])
         }
-        return Response(JSONEncoder().encode({'response': dfa_evaluate(automata, expression)}), mimetype="json").status_code(200)
+        return Response(JSONEncoder().encode({'response': dfa_evaluate(automata, expression)}), mimetype="json")
 
     return "ERROR"
 
