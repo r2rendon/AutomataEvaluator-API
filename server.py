@@ -3,6 +3,7 @@ import json
 import os
 from flask import request, Response
 from flask_pymongo import PyMongo
+from dotenv import load_dotenv
 
 import json
 from bson import ObjectId
@@ -38,10 +39,12 @@ class JSONEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-# Config de la aplicacion
+# App Config
+load_dotenv()
+
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
-app.config["MONGO_URI"] = "mongodb+srv://r2Admin:5PuWyaH2lcomqtCx@cluster0-lt7z4.mongodb.net/TeoriaCompuDB?retryWrites=true&w=majority"
+app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 
 mongo = PyMongo(app)
 
