@@ -1,12 +1,10 @@
-class DFA:
+from Models.automata import Automata
+
+class DFA(Automata):
     def __init__(self, dbAutomata, accepting_states, transitions):
-        self.alphabet = dbAutomata["alphabet"]
-        self.states = dbAutomata["states"]
-        self.initial_state = dbAutomata["initial_state"]
-        self.accepting_states = accepting_states
-        self.transitions = transitions
+        super().__init__(dbAutomata, accepting_states, transitions)
         
-    def dfa_evaluate(self, expression):
+    def evaluate(self, expression):
         initial_state = self.initial_state
         accepting_states = self.accepting_states
         transitions = self.transitions
