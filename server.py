@@ -9,7 +9,7 @@ import json
 from bson import ObjectId
 
 # Models
-import Models.dfa as DFA
+from Models.dfa import DFA
 
 # Graphs
 import networkx as nx
