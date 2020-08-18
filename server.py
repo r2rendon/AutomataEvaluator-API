@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 import json
 from bson import ObjectId
 
+# Models
+import Models.dfa as DFA
+
 # Graphs
 import networkx as nx
 from matplotlib import pyplot as plt
@@ -66,29 +69,6 @@ def objectToTupleKeys(obj):
 
 # This is the DFA evaluator
 
-
-def dfa_evaluate(automata, expression):
-    initial_state = automata["initial_state"]
-    accepting_states = automata["accepting_states"]
-    transitions = automata["transitions"]
-
-    current_state = initial_state
-
-    transition_exists = True
-
-    for char_index in range(len(expression)):
-        current_char = expression[char_index]
-
-        if ((current_state, current_char) not in transitions):
-            transition_exists = False
-            break
-        next_state = transitions[(current_state, current_char)]
-        # print(current_state, current_char, next_state) This format can be used to return the evaluation process in the automata
-        current_state = next_state
-
-    # If the transition exists and the current state is an accepting state, then the expression belongs to the automata
-    return (transition_exists and current_state in accepting_states)
-
 # Routes
 
 
@@ -115,12 +95,8 @@ def api_get_automata_by_id(id):
 def api_get_evaluation(evalType, automataID, expression):
     if evalType == "dfa":
         dbAutomata = mongo.db.Automatas.find({"_id": ObjectId(automataID)})[0]
-        automata = {
-            'initial_state': dbAutomata["initial_state"],
-            'accepting_states': set(dbAutomata["accepting_states"]),
-            'transitions': objectToTupleKeys(dbAutomata["transitions"])
-        }
-        return Response(JSONEncoder().encode({'response': dfa_evaluate(automata, expression)}), mimetype="json")
+        automata = DFA(dbAutomata, set(dbAutomata["accepting_states"]), objectToTupleKeys(dbAutomata["transitions"]))
+        return Response(JSONEncoder().encode({'response': automata.dfa_evaluate(expression)}), mimetype="json")
 
     return "ERROR"
 
