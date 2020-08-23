@@ -10,4 +10,4 @@ class NFA(Automata):
 
     # NFA Evaluate method returns the equivalent DFA
     def evaluate(self, expression):
-        pass    
+        pass
