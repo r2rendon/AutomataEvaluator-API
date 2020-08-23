@@ -10,6 +10,8 @@ from bson import ObjectId
 
 # Models
 from Models.dfa import DFA
+from Models.enfa import ENFA
+from Models.nfa import NFA
 
 # Graphs
 import networkx as nx
