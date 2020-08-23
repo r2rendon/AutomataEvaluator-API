@@ -5,6 +5,13 @@ class Automata:
         self.initial_state = dbAutomata["initial_state"]
         self.accepting_states = accepting_states
         self.transitions = transitions
+    
+    def __init__(self):
+        self.alphabet = list()
+        self.states = list()
+        self.initial_state = ""
+        self.accepting_states = set()
+        self.transitions = dict()
 
     def evaluate(self, expression):
         pass
