@@ -3,6 +3,9 @@ from Models.automata import Automata
 class DFA(Automata):
     def __init__(self, dbAutomata, accepting_states, transitions):
         super().__init__(dbAutomata, accepting_states, transitions)
+
+    def __init__(self):
+        super().__init__()
         
     def evaluate(self, expression):
         initial_state = self.initial_state
