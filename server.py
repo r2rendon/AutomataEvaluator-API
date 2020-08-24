@@ -107,7 +107,7 @@ def api_get_evaluation(evalType, automataID, expression):
         return Response(JSONEncoder().encode({'response': dfaEquivalent.evaluate(expression)}, mimetype="json"))
 
 
-    return "ERROR"
+    return Response(JSONEncoder().encode({'reponse': 'ERROR'}), mimetype="json")
 
 
 @app.route('/automata', methods=['POST'])
