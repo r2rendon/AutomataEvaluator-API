@@ -98,7 +98,14 @@ def api_get_evaluation(evalType, automataID, expression):
     if evalType == "dfa":
         dbAutomata = mongo.db.Automatas.find({"_id": ObjectId(automataID)})[0]
         automata = DFA(dbAutomata, set(dbAutomata["accepting_states"]), objectToTupleKeys(dbAutomata["transitions"]))
-        return Response(JSONEncoder().encode({'response': automata.dfa_evaluate(expression)}), mimetype="json")
+        return Response(JSONEncoder().encode({'response': automata.evaluate(expression)}), mimetype="json")
+    elif (evalType == "enfa"):
+        dbAutomata = mongo.db.Automatas.find({"_id": ObjectId(automataID)})[0]
+        automata = ENFA(dbAutomata, set(dbAutomata["accepting_states"]), objectToTupleKeys(dbAutomata["transitions"]))
+        nfaEquivalent = automata.evaluate(expression)
+        dfaEquivalent = nfaEquivalent.evaluate(expression)
+        return Response(JSONEncoder().encode({'response': dfaEquivalent.evaluate(expression)}, mimetype="json"))
+
 
     return "ERROR"
 
