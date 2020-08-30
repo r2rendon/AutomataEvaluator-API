@@ -17,6 +17,9 @@ from Models.nfa import NFA
 import networkx as nx
 from matplotlib import pyplot as plt
 
+# Flask CORS Module
+from flask_cors import CORS
+
 # Firebase
 import pyrebase
 
@@ -49,8 +52,9 @@ load_dotenv()
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
-app.config["MONGO_URI"] = os.getenv("MONGO_URI")
+CORS(app)
 
+app.config["MONGO_URI"] = os.getenv("MONGO_URI")
 mongo = PyMongo(app)
 
 # API Functions
@@ -104,7 +108,9 @@ def api_get_evaluation(evalType, automataID, expression):
         automata = ENFA(dbAutomata, set(dbAutomata["accepting_states"]), objectToTupleKeys(dbAutomata["transitions"]))
         nfaEquivalent = automata.evaluate(expression)
         dfaEquivalent = nfaEquivalent.evaluate(expression)
-        return Response(JSONEncoder().encode({'response': dfaEquivalent.evaluate(expression)}, mimetype="json"))
+        return Response(JSONEncoder().encode({'response': ""}), mimetype="json")
+        # dfaEquivalent = nfaEquivalent.evaluate(expression)
+        # return Response(JSONEncoder().encode({'response': dfaEquivalent.evaluate(expression)}, mimetype="json"))
 
 
     return Response(JSONEncoder().encode({'reponse': 'ERROR'}), mimetype="json")
@@ -113,29 +119,29 @@ def api_get_evaluation(evalType, automataID, expression):
 @app.route('/automata', methods=['POST'])
 def api_post_automata():
     mongo.db.Automatas.insert_one(request.json)
-    newAutomata = mongo.db.Automatas.find().sort([('_id', -1)])[0]
+    # newAutomata = mongo.db.Automatas.find().sort([('_id', -1)])[0]
 
-    G = nx.DiGraph()
-    for state in newAutomata["states"]:
-        G.add_node(state)
+    # G = nx.DiGraph()
+    # for state in newAutomata["states"]:
+    #     G.add_node(state)
 
-    edges = []
-    keys = list(newAutomata["transitions"].keys())
-    transitions = newAutomata["transitions"]
-    for key in keys:
-        dividedKey = key.split(',')
-        edges.append(
-            (dividedKey[0], transitions[key], dividedKey[1].replace(" ", "")))
+    # edges = []
+    # keys = list(newAutomata["transitions"].keys())
+    # transitions = newAutomata["transitions"]
+    # for key in keys:
+    #     dividedKey = key.split(',')
+    #     edges.append(
+    #         (dividedKey[0], transitions[key], dividedKey[1].replace(" ", "")))
 
-    G.add_weighted_edges_from(edges)
-    nx.draw_networkx(G, with_label=True)
+    # G.add_weighted_edges_from(edges)
+    # nx.draw_networkx(G, with_label=True)
 
-    graphName = "graph-" + str(newAutomata["_id"])+".png"
-    plt.savefig(graphName)
+    # graphName = "graph-" + str(newAutomata["_id"])+".png"
+    # plt.savefig(graphName)
 
-    storage.child(path_on_cloud+graphName).put(graphName)
+    # storage.child(path_on_cloud+graphName).put(graphName)
 
-    os.remove(graphName)
+    # os.remove(graphName)
 
     return "ok"
 
