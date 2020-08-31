@@ -31,21 +31,21 @@ class NFA(Automata):
         newTransitions = dict()
         for newState in newStates:
             for aElement in self.alphabet:
-                currentTransition = self.transitions[(newState[0], aElement)] 
-                # newTransitions[(newState, aElement)] = self.transitions[(newState, aElement)]                
-                if currentTransition not in newStates:
-                    if len(currentTransition) > 1:
-                        newStates.append(currentTransition)
-                        for alph in self.alphabet:
-                            res = ''
-                            for transition in currentTransition:
-                                if(transition, alph) in self.transitions:
-                                    res = res+(''.join(self.transitions[(transition, alph)]))
-                            newTransitions[newState[0], alph] = res
-                            newTransitions[''.join(currentTransition), alph] = res
-                    else:
-                        newStates.append(currentTransition)
-                        newTransitions[(newState[0], aElement)] = currentTransition[0]
+                if (newState[0], aElement) in self.transitions:
+                    currentTransition = self.transitions[(newState[0], aElement)] 
+                    if currentTransition not in newStates:
+                        if len(currentTransition) > 1:
+                            newStates.append(currentTransition)
+                            for alph in self.alphabet:
+                                res = ''
+                                for transition in currentTransition:
+                                    if(transition, alph) in self.transitions:
+                                        res = res+(''.join(self.transitions[(transition, alph)]))
+                                newTransitions[newState[0], alph] = res
+                                newTransitions[''.join(currentTransition), alph] = res
+                        else:
+                            newStates.append(currentTransition)
+                            newTransitions[(newState[0], aElement)] = currentTransition[0]
 
         return (newStates, newTransitions)
 

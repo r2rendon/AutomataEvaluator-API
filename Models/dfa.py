@@ -20,7 +20,6 @@ class DFA(Automata):
                 transition_exists = False
                 break
             next_state = transitions[(current_state, current_char)]
-            # print(current_state, current_char, next_state) This format can be used to return the evaluation process in the automata
             current_state = next_state
 
         # If the transition exists and the current state is an accepting state, then the expression belongs to the automata
