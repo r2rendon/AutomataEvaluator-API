@@ -15,13 +15,16 @@ from Models.nfa import NFA
 
 # Graphs
 import networkx as nx
+import matplotlib
+matplotlib.use('Agg')
 from matplotlib import pyplot as plt
+
 
 # Flask CORS Module
 from flask_cors import CORS
 
 # Firebase
-import pyrebase
+import pyrebase 
 
 # Firebase config
 config = {
@@ -132,27 +135,29 @@ def api_post_automata():
     mongo.db.Automatas.insert_one(request.json)
     newAutomata = mongo.db.Automatas.find().sort([('_id', -1)])[0]
 
-    # G = nx.DiGraph()
-    # for state in newAutomata["states"]:
-    #     G.add_node(state)
+    G = nx.DiGraph()
+    for state in newAutomata["states"]:
+        G.add_node(state)
 
-    # edges = []
-    # keys = list(newAutomata["transitions"].keys())
-    # transitions = newAutomata["transitions"]
-    # for key in keys:
-    #     dividedKey = key.split(',')
-    #     edges.append(
-    #         (dividedKey[0], transitions[key], dividedKey[1].replace(" ", "")))
+    edges = []
+    keys = list(newAutomata["transitions"].keys())
+    transitions = newAutomata["transitions"]
+    edge_labels = dict()
+    for key in keys:
+        dividedKey = key.split(',')
+        G.add_edge(dividedKey[0], transitions[key])
+        edge_labels[(dividedKey[0], transitions[key])] = dividedKey[1]
 
-    # G.add_weighted_edges_from(edges)
-    # nx.draw_networkx(G)
+    pos=nx.spring_layout(G)
+    nx.draw_networkx(G, pos=pos)
+    nx.draw_networkx_edge_labels(G, pos=pos ,edge_labels=edge_labels)
 
-    # graphName = "graph-" + str(newAutomata["_id"])+".png"
-    # plt.savefig(graphName)
+    graphName = "graph-" + str(newAutomata["_id"])+".png"
+    plt.savefig(graphName)
 
-    # storage.child(path_on_cloud+graphName).put(graphName)
+    storage.child(path_on_cloud+graphName).put(graphName)
 
-    # os.remove(graphName)
+    os.remove(graphName)
 
     return "ok"
 
