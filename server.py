@@ -104,6 +104,7 @@ def api_get_automatas_by_type(type):
 @app.route('/automata/<id>', methods=['GET'])
 def api_get_automata_by_id(id):
     automata = mongo.db.Automatas.find({"_id": ObjectId(id)})[0]
+    automata["img"] = storage.child(path_on_cloud+'graph-'+str(automata['_id'])+'.png').get_url(None)
     json_automata = JSONEncoder().encode(automata)
 
     return Response(json_automata, mimetype="json")
@@ -117,12 +118,10 @@ def api_get_evaluation(evalType, automataID, expression):
         return Response(JSONEncoder().encode({'response': automata.evaluate(expression)}), mimetype="json")
     elif (evalType == "enfa"):
         dbAutomata = mongo.db.Automatas.find({"_id": ObjectId(automataID)})[0]
-        automata = ENFA(dbAutomata, set(dbAutomata["accepting_states"]), objectToTupleKeys(dbAutomata["transitions"]))
+        automata = ENFA(dbAutomata, dbAutomata["accepting_states"], objectToTupleKeys(dbAutomata["transitions"]))
         nfaEquivalent = automata.evaluate(expression)
         dfaEquivalent = nfaEquivalent.evaluate(expression)
-        return Response(JSONEncoder().encode({'response': ""}), mimetype="json")
-        # dfaEquivalent = nfaEquivalent.evaluate(expression)
-        # return Response(JSONEncoder().encode({'response': dfaEquivalent.evaluate(expression)}, mimetype="json"))
+        return Response(JSONEncoder().encode({'response': dfaEquivalent.evaluate(expression)}), mimetype="json")
 
 
     return Response(JSONEncoder().encode({'reponse': 'ERROR'}), mimetype="json")
