@@ -88,8 +88,20 @@ def api_get_automatas():
 
     return Response(json_automatas, mimetype="json")
 
+@app.route('/automatas/<type>', methods=['GET'])
+def api_get_automatas_by_type(type):
+    automatas = []
+    for x in mongo.db.Automatas.find({"type": type}):
+        automatas.append(x)
 
-@app.route('/automatas/<id>', methods=['GET'])
+    for automata in automatas:
+        automata["img"] = storage.child(path_on_cloud+'graph-'+str(automata['_id'])+'.png').get_url(None)
+
+    json_automatas = JSONEncoder().encode(automatas)
+
+    return Response(json_automatas, mimetype="json")
+
+@app.route('/automata/<id>', methods=['GET'])
 def api_get_automata_by_id(id):
     automata = mongo.db.Automatas.find({"_id": ObjectId(id)})[0]
     json_automata = JSONEncoder().encode(automata)
@@ -119,7 +131,7 @@ def api_get_evaluation(evalType, automataID, expression):
 @app.route('/automata', methods=['POST'])
 def api_post_automata():
     mongo.db.Automatas.insert_one(request.json)
-    # newAutomata = mongo.db.Automatas.find().sort([('_id', -1)])[0]
+    newAutomata = mongo.db.Automatas.find().sort([('_id', -1)])[0]
 
     # G = nx.DiGraph()
     # for state in newAutomata["states"]:
@@ -134,7 +146,7 @@ def api_post_automata():
     #         (dividedKey[0], transitions[key], dividedKey[1].replace(" ", "")))
 
     # G.add_weighted_edges_from(edges)
-    # nx.draw_networkx(G, with_label=True)
+    # nx.draw_networkx(G)
 
     # graphName = "graph-" + str(newAutomata["_id"])+".png"
     # plt.savefig(graphName)
