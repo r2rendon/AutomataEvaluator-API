@@ -139,7 +139,6 @@ def api_post_automata():
     for state in newAutomata["states"]:
         G.add_node(state)
 
-    edges = []
     keys = list(newAutomata["transitions"].keys())
     transitions = newAutomata["transitions"]
     edge_labels = dict()
