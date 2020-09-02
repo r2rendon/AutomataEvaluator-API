@@ -1,4 +1,4 @@
-Índice {#índice .TOC-Heading}
+Índice
 ======
 
 [Introducción y Explicación del Proyecto
